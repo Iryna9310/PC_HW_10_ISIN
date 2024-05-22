@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from .forms import AuthorForm, QuoteForm
 from .models import Author, Quote
+from django.shortcuts import get_object_or_404
 
+# Додайте це представлення
 def home(request):
-    return HttpResponse("Hello, world!")
+    return render(request, 'home.html')
 
 @login_required
 def add_author(request):
@@ -13,8 +15,8 @@ def add_author(request):
         form = AuthorForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Автор успішно доданий!')  # Повідомлення про успішне додавання
-            return redirect('home')  # Перенаправлення на домашню сторінку після додавання
+            messages.success(request, 'Author added successfully!')
+            return redirect('home')
     else:
         form = AuthorForm()
     return render(request, 'add_author.html', {'form': form})
@@ -25,8 +27,17 @@ def add_quote(request):
         form = QuoteForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Цитата успішно додана!')  # Повідомлення про успішне додавання
-            return redirect('home')  # Перенаправлення на домашню сторінку після додавання
+            messages.success(request, 'Quote added successfully!')
+            return redirect('home')
     else:
         form = QuoteForm()
     return render(request, 'add_quote.html', {'form': form})
+
+def author_detail(request, author_id):
+    author = get_object_or_404(Author, pk=author_id)
+    return render(request, 'quotes/author_detail.html', {'author': author})
+
+def all_quotes(request):
+    quotes = Quote.objects.all()
+    return render(request, 'quotes/all_quotes.html', {'quotes': quotes})
+

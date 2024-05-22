@@ -20,5 +20,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('quotes.urls')),  # Додано шлях для додатку quotes
+    path('', include('quotes.urls')), 
+    path('accounts/', include('allauth.urls')), 
 ]
