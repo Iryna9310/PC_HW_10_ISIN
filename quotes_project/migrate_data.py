@@ -12,7 +12,7 @@ from quotes.models import Author, Quote
 
 # Підключення до MongoDB
 print("Connecting to MongoDB...")
-client = MongoClient("mongodb+srv://IrynaIra:LG152367@cluster0.ct1p0gg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+client = MongoClient("mongodb+srv://MYNAME:PASSWORD@cluster0.ct1p0gg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 mongo_db = client['my_database']
 print("MongoDB connection established.")
 print("Available collections:", mongo_db.list_collection_names())
