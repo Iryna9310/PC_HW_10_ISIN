@@ -37,5 +37,5 @@ def author_detail(request, pk):
 
 def all_quotes(request):
     quotes = Quote.objects.all()
-    return render(request, 'all_quotes.html', {'quotes': quotes})
+    return render(request, 'quotes/all_quotes.html', {'quotes': quotes})
 

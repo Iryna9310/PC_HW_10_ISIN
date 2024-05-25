@@ -12,7 +12,7 @@ from quotes.models import Author, Quote
 
 # Підключення до MongoDB
 print("Connecting to MongoDB...")
-client = MongoClient("mongodb+srv://MYNAME:PASSWORD@cluster0.ct1p0gg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+client = MongoClient("mongodb+srv://IrynaIra:LG152367@cluster0.ct1p0gg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 mongo_db = client['my_database']
 print("MongoDB connection established.")
 print("Available collections:", mongo_db.list_collection_names())
@@ -37,6 +37,9 @@ mongo_quotes = mongo_db['quote']
 print(f"Number of authors in MongoDB: {mongo_authors.count_documents({})}")
 print(f"Number of quotes in MongoDB: {mongo_quotes.count_documents({})}")
 
+# Створюємо словник для відображення ідентифікаторів авторів MongoDB на Django
+author_id_map = {}
+
 # Міграція авторів
 print("Starting authors migration...")
 for mongo_author in mongo_authors.find():
@@ -49,27 +52,28 @@ for mongo_author in mongo_authors.find():
             'description': mongo_author['description']
         }
     )
-    if created:
-        print(f"Author {author.fullname} created.")
-    else:
-        print(f"Author {author.fullname} already exists.")
+    author_id_map[str(mongo_author['_id'])] = author.id  # Зберігаємо відображення ідентифікаторів авторів
 
 # Міграція цитат
 print("Starting quotes migration...")
 for mongo_quote in mongo_quotes.find():
     print(f"Processing quote: {mongo_quote}")
-    author_name = mongo_quote['author']
-    try:
-        author = Author.objects.get(fullname=author_name)
+    author_id = author_id_map.get(str(mongo_quote['author']))  # Отримуємо відповідний ідентифікатор автора зі словника
+    if author_id:
+        quote_text = mongo_quote['quote']
+        if author_id:
+            author = Author.objects.get(id=author_id)
+            quote_text = f'"{quote_text}" - {author.fullname}'
+        else:
+            quote_text = f'"{quote_text}" - Author unknown'
+        
         quote, created = Quote.objects.get_or_create(
-            quote=mongo_quote['quote'],
-            author=author,
-            defaults={'tags': mongo_quote['tags']}
+            quote=quote_text,
+            author_id=author_id
         )
         if created:
             print(f"Quote created: {quote.quote}")
-        else:
-            print(f"Quote already exists: {quote.quote}")
-    except Author.DoesNotExist:
-        print(f"Author {author_name} does not exist. Quote not created: {mongo_quote['quote']}")
+    else:
+        print("Author not found. Quote not migrated.")
+
 print("Migration completed.")

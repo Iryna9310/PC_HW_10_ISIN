@@ -9,10 +9,16 @@ class Author(models.Model):
     def __str__(self):
         return self.fullname
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
 class Quote(models.Model):
-    tags = models.CharField(max_length=255)  # Тут можна використовувати іншу структуру для тегів, якщо необхідно
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='quotes')
+    tags = models.ManyToManyField(Tag, related_name='quotes')
     quote = models.TextField()
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='quotes')
 
     def __str__(self):
         return self.quote

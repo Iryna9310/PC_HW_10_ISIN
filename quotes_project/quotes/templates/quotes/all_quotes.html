@@ -2,14 +2,31 @@
 <html>
 <head>
     <title>All Quotes</title>
+    <style>
+        .quote-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .quote-container .author-link {
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
     <h1>All Quotes</h1>
-    <ul>
-        {% for quote in quotes %}
-            <li>{{ quote.text }} - {{ quote.author.name }}</li>
-        {% endfor %}
-    </ul>
-    <p><a href="{% url 'home' %}">Back to Home</a></p>
+    {% for quote in quotes %}
+        <div class="quote-container">
+            <p>“{{ quote.quote }}”</p>
+            <p>by <a href="{% url 'author_detail' quote.author.pk %}">{{ quote.author.fullname }}</a> (<a href="{% url 'author_detail' quote.author.pk %}" class="author-link">about </a>)</p>
+            <p>Tags: 
+                {% for tag in quote.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        </div>
+    {% endfor %}
 </body>
 </html>
+
