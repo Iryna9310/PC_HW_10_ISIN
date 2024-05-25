@@ -8,11 +8,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'quotes_project.settings')
 django.setup()
 print("Django setup complete.")
 
-from quotes.models import Author, Quote
+from quotes.models import Author, Quote, Tag
 
 # Підключення до MongoDB
 print("Connecting to MongoDB...")
-client = MongoClient("mongodb+srv://IrynaIra:LG152367@cluster0.ct1p0gg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+client = MongoClient("mongodb+srv://MYNAME:PASSWORD@cluster0.ct1p0gg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 mongo_db = client['my_database']
 print("MongoDB connection established.")
 print("Available collections:", mongo_db.list_collection_names())
@@ -60,20 +60,25 @@ for mongo_quote in mongo_quotes.find():
     print(f"Processing quote: {mongo_quote}")
     author_id = author_id_map.get(str(mongo_quote['author']))  # Отримуємо відповідний ідентифікатор автора зі словника
     if author_id:
-        quote_text = mongo_quote['quote']
-        if author_id:
-            author = Author.objects.get(id=author_id)
-            quote_text = f'"{quote_text}" - {author.fullname}'
-        else:
-            quote_text = f'"{quote_text}" - Author unknown'
-        
-        quote, created = Quote.objects.get_or_create(
-            quote=quote_text,
-            author_id=author_id
-        )
-        if created:
-            print(f"Quote created: {quote.quote}")
+        author = Author.objects.get(id=author_id)
+        quote_text = f'"{mongo_quote["quote"]}" - {author.fullname}'
     else:
-        print("Author not found. Quote not migrated.")
+        quote_text = f'"{mongo_quote["quote"]}" - Author unknown'
+    
+    quote, created = Quote.objects.get_or_create(
+        quote=quote_text,
+        author_id=author_id
+    )
+
+    # Міграція тегів
+    if 'tags' in mongo_quote:
+        for tag_name in mongo_quote['tags']:
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            quote.tags.add(tag)
+
+    if created:
+        print(f"Quote created: {quote.quote}")
+    else:
+        print(f"Quote already exists: {quote.quote}")
 
 print("Migration completed.")
