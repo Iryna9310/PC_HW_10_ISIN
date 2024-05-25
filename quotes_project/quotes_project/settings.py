@@ -119,6 +119,12 @@ AUTHENTICATION_BACKENDS = [
 # Site ID for allauth
 SITE_ID = 1
 
+# allauth settings
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # або 'mandatory' для обов'язкової верифікації email
+ACCOUNT_EMAIL_REQUIRED = True
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -140,3 +146,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+

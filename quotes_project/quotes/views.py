@@ -1,11 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import AuthorForm, QuoteForm
 from .models import Author, Quote
-from django.shortcuts import get_object_or_404
 
-# Додайте це представлення
 def home(request):
     return render(request, 'home.html')
 
@@ -33,11 +31,11 @@ def add_quote(request):
         form = QuoteForm()
     return render(request, 'add_quote.html', {'form': form})
 
-def author_detail(request, author_id):
-    author = get_object_or_404(Author, pk=author_id)
-    return render(request, 'quotes/author_detail.html', {'author': author})
+def author_detail(request, pk):
+    author = get_object_or_404(Author, pk=pk)
+    return render(request, 'author_detail.html', {'author': author})
 
 def all_quotes(request):
     quotes = Quote.objects.all()
-    return render(request, 'quotes/all_quotes.html', {'quotes': quotes})
+    return render(request, 'all_quotes.html', {'quotes': quotes})
 

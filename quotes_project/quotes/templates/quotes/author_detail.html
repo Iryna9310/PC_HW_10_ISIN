@@ -1,9 +1,13 @@
-{% extends 'base_generic.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Author Detail</title>
+</head>
+<body>
+    <h1>{{ author.name }}</h1>
+    <p>{{ author.bio }}</p>
+    <p><a href="{% url 'home' %}">Back to Home</a></p>
+</body>
+</html>
 
-{% block content %}
-  <h2>{{ author.fullname }}</h2>
-  <p><strong>Born:</strong> {{ author.born_date }} in {{ author.born_location }}</p>
-  <p>{{ author.description }}</p>
-  
-{% endblock %}
 

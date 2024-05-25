@@ -8,5 +8,12 @@
     <p><a href="{% url 'add_author' %}">Add Author</a></p>
     <p><a href="{% url 'add_quote' %}">Add Quote</a></p>
     <p><a href="{% url 'all_quotes' %}">View All Quotes</a></p>
+
+    {% if user.is_authenticated %}
+        <p><a href="{% url 'account_logout' %}">Logout</a></p>
+    {% else %}
+        <p><a href="{% url 'account_login' %}">Login</a></p>
+        <p><a href="{% url 'account_signup' %}">Sign Up</a></p>
+    {% endif %}
 </body>
 </html>
